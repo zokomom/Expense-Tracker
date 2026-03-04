@@ -18,11 +18,11 @@ router = APIRouter(
 def create_user(user: UserIn, db: Session = Depends(get_db)):
     hashed_password = hash_password(user.password)
     user.password = hashed_password
-    new_user = User(**user.model_dump)
+    new_user = User(**user.model_dump())
     try:
         db.add(new_user)
         db.commit()
-        db.refresh()
+        db.refresh(new_user)
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,

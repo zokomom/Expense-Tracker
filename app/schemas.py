@@ -1,10 +1,12 @@
 from pydantic import BaseModel, field_validator
 import re
+from datetime import datetime
 
 
 class UserOut(BaseModel):
     user_id: int
     email: str
+    created_at: datetime
 
 
 class UserIn(BaseModel):
