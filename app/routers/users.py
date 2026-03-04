@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..utils import hash_password
 from ..models import User
-from sqlalchemy.exc import IntegrityException
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 
 router = APIRouter(
@@ -23,7 +23,7 @@ def create_user(user: UserIn, db: Session = Depends(get_db)):
         db.add(new_user)
         db.commit()
         db.refresh()
-    except IntegrityException:
+    except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="Entered email already exists.")
