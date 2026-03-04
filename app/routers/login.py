@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=TokenOut)
+@router.post("", response_model=TokenOut, status_code=status.HTTP_200_OK)
 def user_login(db: Session = Depends(get_db), user_credentials: OAuth2PasswordRequestForm = Depends()):
     user = db.query(User).filter(
         user_credentials.username == User.email).first()
