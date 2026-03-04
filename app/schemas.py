@@ -29,7 +29,7 @@ class UserIn(BaseModel):
         return value
 
 
-class TokenData:
+class TokenData(BaseModel):
     id: int
 
 

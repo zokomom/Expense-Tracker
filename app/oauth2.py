@@ -19,7 +19,7 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire_time = datetime.now()+timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire_time})
-    return jwt.encode(SECRET_KEY, to_encode, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def verify_access_token(token: str, credential_exception):
