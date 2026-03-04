@@ -25,3 +25,12 @@ class UserIn(BaseModel):
             raise ValueError(
                 "Password must contain at least one special character")
         return value
+
+
+class TokenData:
+    id: int
+
+
+class TokenOut(BaseModel):
+    access_token: str
+    token_type: str
