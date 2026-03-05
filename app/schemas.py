@@ -1,16 +1,16 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator,EmailStr
 import re
 from datetime import datetime
 
 
 class UserOut(BaseModel):
     user_id: int
-    email: str
+    email: EmailStr
     created_at: datetime
 
 
 class UserIn(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
     @field_validator("password")
