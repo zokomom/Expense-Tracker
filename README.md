@@ -150,6 +150,7 @@ Once the server is running, visit:
 ## 🙏 Credits
 
 This project is based on the [Expense Tracker API](https://roadmap.sh/projects/expense-tracker) project from [roadmap.sh](https://roadmap.sh).
+[https://roadmap.sh/projects/expense-tracker-api](https://roadmap.sh/projects/expense-tracker-api)
 
 ---
 
