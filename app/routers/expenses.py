@@ -38,7 +38,24 @@ def delete_expense(id: int, db: Session = Depends(get_db), get_user: int = Depen
             status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist.")
 
     if not get_user.user_id == delete_expense_query.user_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist.")
 
     db.delete(delete_expense_query)
     db.commit()
+
+
+@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_expense(id: int, expense: ExpenseIn, db: Session = Depends(get_db), get_user: int = Depends(get_access_token)):
+    update_expense_query = db.query(Expense).filter(id == Expense.id)
+    update_expense_data = update_expense_query.first()
+    if not update_expense_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist.")
+    if not get_user.user_id == update_expense_data.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist.")
+    update_expense_query.update(
+        expense.model_dump(), synchronize_session=False)
+    db.commit()
+    return update_expense_query.first()
