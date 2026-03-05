@@ -19,7 +19,7 @@ def user_login(db: Session = Depends(get_db), user_credentials: OAuth2PasswordRe
         user_credentials.username == User.email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            details=f"Invalid Credentials.")
+                            detail=f"Invalid Credentials.")
     if not verify_password(user_credentials.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid Credentials.")
