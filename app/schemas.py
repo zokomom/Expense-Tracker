@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator,EmailStr
+from pydantic import BaseModel, field_validator, EmailStr
 import re
 from datetime import datetime
 
@@ -43,6 +43,7 @@ class ExpenseOut(BaseModel):
     user_id: int
     amount: float
     category: str
+    created_at: datetime
 
 
 class ExpenseIn(BaseModel):

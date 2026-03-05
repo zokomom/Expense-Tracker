@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from ..schemas import ExpenseOut, ExpenseIn
 from ..database import get_db
-from typing import List
+from typing import List, Optional
 from ..oauth2 import get_access_token
 from ..models import Expense
+from datetime import datetime, timedelta, timezone
+from fastapi import Query
 
 router = APIRouter(
     prefix="/expenses",
@@ -13,10 +15,39 @@ router = APIRouter(
 
 
 @router.get("", response_model=List[ExpenseOut])
-def get_expenses(db: Session = Depends(get_db), get_user: int = Depends(get_access_token)):
-    expenses = db.query(Expense).filter(
-        get_user.user_id == Expense.user_id).all()
-    return expenses
+def get_expenses(db: Session = Depends(get_db),
+                 get_user: int = Depends(get_access_token),
+                 filter: Optional[str] = Query(
+                     None, enum=["past_week", "past_month", "last_3_months", "custom"]),
+                 start_date: Optional[str] = None,
+                 end_date: Optional[str] = None,
+                 search: Optional[str] = None):
+
+    now = datetime.now(timezone.utc)
+    expenses_query = db.query(Expense).filter(
+        get_user.user_id == Expense.user_id)
+    if filter == "past_week":
+        expenses_query = expenses_query.filter(
+            Expense.created_at >= (now-timedelta(weeks=1)))
+    elif filter == "past_month":
+        expenses_query = expenses_query.filter(
+            Expense.created_at >= (now-timedelta(days=30)))
+    elif filter == "last_3_months":
+        expenses_query = expenses_query.filter(
+            Expense.created_at >= (now-timedelta(days=90)))
+    elif filter == "custom":
+        try:
+            start = datetime.strptime(start_date, "%d-%m-%Y")
+            end = datetime.strptime(end_date, "%d-%m-%Y")
+            expenses_query = expenses_query.filter(
+                Expense.created_at >= start, Expense.created_at <= end)
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail=f"Invalid date format. Use dd-mm-yyyy or dd-mm-yy")
+    if search:
+        expenses_query = expenses_query.filter(
+            Expense.category == search.strip().capitalize())
+    return expenses_query.all()
 
 
 @router.post("", response_model=ExpenseOut, status_code=status.HTTP_201_CREATED)
